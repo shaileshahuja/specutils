@@ -2,6 +2,7 @@
 
 import warnings
 import numpy as np
+from scipy import interpolate
 
 from astropy.extern import six
 from astropy.utils import misc
@@ -242,6 +243,17 @@ class Spectrum1DChebyshevWCS(BaseSpectrum1DWCS, polynomial.Chebyshev1D):
 
     def __call__(self, pixel_indices):
         return polynomial.Chebyshev1D.__call__(self, pixel_indices) * self.unit
+
+class Spectrum1DLinearSplineWCS(BaseSpectrum1DWCS):
+    """
+    WCS for polynomial dispersion using linear spline interpolation.
+    """
+
+    def __init__(self, tck):
+        self.tck = tck
+
+    def __call__(self, pixel_indices):
+        return interpolate.splev(pixel_indices, self.tck)
 
 @deprecated('0.dev???')
 def _parse_doppler_convention(dc):
